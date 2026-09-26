@@ -1,15 +1,14 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
-import contact_dialog
 import add_tnumber
 import remove_tnumber
 import sort_n_search_tnumber as sns
 import download_tnumbers_file
 import save_tnumbers_file
 import new_phonebook
-from phone_entry import PhoneEntry
-from input_limits import limit_name, limit_length
+import contact_dialog
+from input_limits import limit_length
 
 
 MAX_CONTACTS = 100   # максимальное количество записей в справочнике
@@ -255,44 +254,6 @@ class PhoneBook:
             initial=contact,
             on_submit=on_submit,
         )
-
-        def form_is_valid() -> bool:
-            return phone_entry.is_valid()
-
-        def update_save_state():
-            btn_save.config(state="normal" if form_is_valid() else "disabled")
-
-        def on_save():
-            if not form_is_valid():
-                return
-            self.contacts[idx] = {
-                "name": e_name.get().strip(),
-                "phone": phone_entry.get(),
-                "comment": e_comment.get().strip(),
-            }
-            self.dirty = True
-            self._update_title()
-            self.refresh()
-            win.destroy()
-
-        phone_entry = PhoneEntry(win, initial=contact["phone"],
-                                 on_change=lambda _valid: update_save_state())
-        phone_entry.pack(fill="x", padx=10)
-
-        # --- Комментарий ---
-        tk.Label(win, text="Комментарий:").pack(anchor="w", padx=10, pady=(10, 0))
-        e_comment = tk.Entry(win, width=40)
-        e_comment.insert(0, contact["comment"])
-        e_comment.pack(padx=10, fill="x")
-        limit_length(e_comment, max_len=64)
-
-        # --- Кнопка ---
-        btn_save = tk.Button(win, text="Сохранить",
-                             command=lambda: on_save(),
-                             state="disabled")
-        btn_save.pack(pady=15)
-
-        update_save_state()
 
     def sort_by(self, column):
         if self.sort_column == column:
