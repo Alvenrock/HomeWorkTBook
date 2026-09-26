@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
+import contact_dialog
 import add_tnumber
 import remove_tnumber
 import sort_n_search_tnumber as sns
@@ -242,21 +243,18 @@ class PhoneBook:
 
         contact = self.contacts[idx]
 
-        win = tk.Toplevel(self.root)
-        win.title("Изменить контакт")
-        win.geometry("400x320")
-        win.transient(self.root)
-        win.grab_set()
+        def on_submit(data):
+            self.contacts[idx] = data
+            self.dirty = True
+            self._update_title()
+            self.refresh()
 
-        # --- Имя ---
-        tk.Label(win, text="Имя:").pack(anchor="w", padx=10, pady=(10, 0))
-        e_name = tk.Entry(win, width=40)
-        e_name.insert(0, contact["name"])
-        e_name.pack(padx=10, fill="x")
-        limit_name(e_name, max_len=64)
-
-        # --- Телефон ---
-        tk.Label(win, text="Телефон:").pack(anchor="w", padx=10, pady=(10, 0))
+        contact_dialog.open_contact_dialog(
+            self.root,
+            title="Изменить контакт",
+            initial=contact,
+            on_submit=on_submit,
+        )
 
         def form_is_valid() -> bool:
             return phone_entry.is_valid()
