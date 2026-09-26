@@ -15,8 +15,8 @@ MAX_CONTACTS = 100   # максимальное количество запис�
 
 
 class PhoneBook:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, root_window):
+        self.root = root_window
         self.root.title("Телефонная книга")
         self.root.geometry("900x500")
 
@@ -32,11 +32,10 @@ class PhoneBook:
         self._build_table()
         self._build_statusbar()
 
-        # Изначально справочник не загружен — блокируем всё, кроме «Загрузить» и «Добавить»
+        # Изначально файл не загружен — блокируем всё, кроме «Загрузить» и «Добавить»
         self._set_actions_enabled(False)
         self.status.set("Файл не загружен")
 
-        # Обработчик закрытия окна
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     # ------------------ UI ------------------
@@ -202,9 +201,8 @@ class PhoneBook:
         if self.current_file is None:
             path = new_phonebook.ask_new_phonebook_path(self.root)
             if not path:
-                return  # пользователь отменил
+                return
 
-            # Создаём и подгружаем пустой справочник
             self.contacts = []
             self.current_file = path
             self.dirty = False
@@ -220,7 +218,6 @@ class PhoneBook:
             )
             return
 
-        # Открываем окно добавления контакта
         before = len(self.contacts)
         add_tnumber.add_contact(self.root, self.contacts, self.refresh,
                                 max_contacts=MAX_CONTACTS)
@@ -309,12 +306,10 @@ class PhoneBook:
 
     # ---------- Закрытие окна ----------
     def on_close(self):
-        # Файл ещё не загружался — просто выходим
         if self.current_file is None:
             self.root.destroy()
             return
 
-        # Нет несохранённых изменений — просто выходим
         if not self.dirty:
             self.root.destroy()
             return
@@ -324,10 +319,10 @@ class PhoneBook:
             "Сохранить изменения перед закрытием?"
         )
 
-        if answer is None:            # Отмена — окно остаётся
+        if answer is None:
             return
 
-        if answer:                    # Да — сохраняем
+        if answer:
             if not save_tnumbers_file.save_file(self.current_file, self.contacts):
                 messagebox.showerror("Ошибка",
                                      "Не удалось сохранить файл. "
@@ -335,7 +330,6 @@ class PhoneBook:
                 return
             self.dirty = False
 
-        # Нет или после успешного сохранения — закрываем
         self.root.destroy()
 
 
