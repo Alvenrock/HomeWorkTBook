@@ -187,3 +187,15 @@ InvalidPhoneError	Неверный формат телефона
 Максимальная длина комментария	64
 Допустимые символы имени	буквы (RU/EN), пробел, дефис, апостроф
 Формат телефона	+7 XXX XXX-XX-XX
+
+---
+
+Запускаем тесты:
+# из корня проекта
+pytest test_directory.py -v
+
+# короткая сводка
+pytest test_directory.py -q
+
+# с покрытием (если установлен pytest-cov)
+pytest test_directory.py --cov=model --cov-report=term-missing
